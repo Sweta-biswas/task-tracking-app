@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -34,6 +35,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.taskreminderapp.domain.model.Reminder
 import com.example.taskreminderapp.presentation.ui.setUpAlarm
@@ -48,6 +51,7 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -112,15 +116,39 @@ fun MainScreen(viewModel: MainViewModel) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = "Task Reminder") },
-                    actions = {
-                        IconButton(onClick = {
-                            scope.launch { sheetState.show() }
-                        }) {
-                            Icon(imageVector = Icons.Default.Add, contentDescription = "Add Task")
+                    title = {
+                        Box(
+                            modifier = Modifier.fillMaxHeight(),
+                            contentAlignment = Alignment.BottomStart
+                        ) {
+                            Text(
+                                text = "Task Reminder",
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
                         }
-                    })
-            }) { paddingValues ->
+                    },
+                    actions = {
+                        Box(
+                            modifier = Modifier.fillMaxHeight(),
+                            contentAlignment = Alignment.BottomEnd
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    scope.launch { sheetState.show() }
+                                },
+                                modifier = Modifier.padding(bottom = 0.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add Task"
+                                )
+                            }
+                        }
+                    },
+                    modifier = Modifier.height(80.dp)
+                )
+            }
+        ) { paddingValues ->
             if (isTimePickerVisible.value) {
                 Dialog(onDismissRequest = { isTimePickerVisible.value = false }) {
                     Surface(
@@ -165,7 +193,17 @@ fun MainScreen(viewModel: MainViewModel) {
                         .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "No Task")
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.empty_task),
+                            contentDescription = "No tasks available",
+                            modifier = Modifier.size(400.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                    }
                 }
             } else {
                 LazyColumn(
